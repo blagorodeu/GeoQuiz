@@ -7,21 +7,32 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.geoquiz.ui.theme.GeoQuizTheme
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -51,8 +62,28 @@ private val questionList = listOf(
     Question("Lake Baikal is the world's oldest and deepest freshwater lake.", true)
 )
 
+// Вывод количества правильных ответов
+fun resultMessage(correct: Int, total: Int): String =
+    "Правильных ответов: " + correct + " из " + total
+
 @Composable
 fun QuizScreen() {
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
+    var currentIndex by remember { mutableStateOf(0) }
+    var correctCount by remember { mutableStateOf(0) }
+    val currentQuestion = questionList[currentIndex]
+    var answeredCurrent by remember { mutableStateOf(false) }
+
+    // Показ всплывающей панели с выводом количества правильных ответов
+    fun showMessage(message: String) {
+        scope.launch {
+            snackbarHostState.currentSnackbarData?.dismiss()
+            snackbarHostState.showSnackbar(message)
+        }
+    }
+
+    // Построение UI
     Scaffold() { innerPadding ->
         Column(
             modifier = Modifier
@@ -63,7 +94,7 @@ fun QuizScreen() {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "Вопрос",
+                text = currentQuestion.text,
                 fontSize = 20.sp,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.padding(bottom = 30.dp)
@@ -75,12 +106,16 @@ fun QuizScreen() {
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {
-                Button(onClick = { },
-                    shape = RectangleShape) {
+                Button(
+                    onClick = { },
+                    shape = RectangleShape
+                ) {
                     Text("TRUE", fontSize = 28.sp)
                 }
-                Button(onClick = { },
-                    shape = RectangleShape) {
+                Button(
+                    onClick = { },
+                    shape = RectangleShape
+                ) {
                     Text("FALSE", fontSize = 28.sp)
                 }
             }
