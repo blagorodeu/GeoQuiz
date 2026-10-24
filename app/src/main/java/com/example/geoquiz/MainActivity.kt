@@ -75,6 +75,7 @@ fun QuizScreen() {
     var correctCount by remember { mutableStateOf(0) }
     val currentQuestion = questionList[currentIndex]
     var answeredCurrent by remember { mutableStateOf(false) }
+    val isLastQuestion = (currentIndex == questionList.lastIndex)
 
     // Показ всплывающей панели с выводом количества правильных ответов
     fun showMessage(message: String) {
@@ -89,14 +90,15 @@ fun QuizScreen() {
             return
         answeredCurrent = true
         val isCorrect = (userPressedTrue == currentQuestion.answerTrue)
-        if (isCorrect)
-        {
+        if (isCorrect) {
             correctCount++
             showMessage("Верно!")
-        }
-        else
-        {
+        } else {
             showMessage("Неверно!")
+        }
+        // Вывод количества правильных ответов после последнего вопроса
+        if (isLastQuestion) {
+            showMessage(resultMessage(correctCount, questionList.size))
         }
     }
 
@@ -146,8 +148,7 @@ fun QuizScreen() {
                         Text("FALSE", fontSize = 28.sp)
                     }
                 }
-            }
-            else // Если ответитли на вопрос
+            } else // Если ответитли на вопрос
             {
                 Row(
                     modifier = Modifier.padding(bottom = 24.dp)
@@ -172,12 +173,26 @@ fun QuizScreen() {
                     }
                 }
             }
-
-            Button(onClick = { handleNext()},
-                shape = RectangleShape,
-                modifier = Modifier.padding(top=10.dp)
-                    .align(Alignment.End)) {
-                Text("NEXT", fontSize = 28.sp)
+            if (!isLastQuestion) //Еще не ответили на
+            // последний вопрос
+                Button(
+                    onClick = { handleNext() },
+                    shape = RectangleShape,
+                    modifier = Modifier.padding(top = 10.dp)
+                        .align(Alignment.End)
+                ) {
+                    Text("NEXT", fontSize = 28.sp)
+                }
+            else { // Уже ответили на последний вопрос
+                Button(
+                    onClick = { handleNext() },
+                    shape = RectangleShape,
+                    enabled = false,
+                    modifier = Modifier.graphicsLayer { alpha = 0f }
+                        .padding(top = 10.dp)
+                        .align(Alignment.End)) {
+                    Text("NEXT", fontSize = 28.sp)
+                }
             }
         }
     }
