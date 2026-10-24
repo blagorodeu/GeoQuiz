@@ -125,23 +125,51 @@ fun QuizScreen() {
                 modifier = Modifier.padding(bottom = 30.dp)
             )
 
-            Row(
-                modifier = Modifier.padding(bottom = 24.dp)
-                    .width(1000.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween,
-            ) {
-                Button(
-                    onClick = { handleAnswer(true)},
-                    shape = RectangleShape
+            if (!answeredCurrent) // Если еще не ответили на вопрос
+            {
+                Row(
+                    modifier = Modifier.padding(bottom = 24.dp)
+                        .width(1000.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween,
                 ) {
-                    Text("TRUE", fontSize = 28.sp)
+                    Button(
+                        onClick = { handleAnswer(true) },
+                        shape = RectangleShape
+                    ) {
+                        Text("TRUE", fontSize = 28.sp)
+                    }
+                    Button(
+                        onClick = { handleAnswer(false) },
+                        shape = RectangleShape
+                    ) {
+                        Text("FALSE", fontSize = 28.sp)
+                    }
                 }
-                Button(
-                    onClick = { handleAnswer(false)},
-                    shape = RectangleShape
+            }
+            else // Если ответитли на вопрос
+            {
+                Row(
+                    modifier = Modifier.padding(bottom = 24.dp)
+                        .width(1000.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween,
                 ) {
-                    Text("FALSE", fontSize = 28.sp)
+                    //Кнопки становятся невидимыми
+                    Button(
+                        onClick = { },
+                        shape = RectangleShape,
+                        modifier = Modifier.graphicsLayer { alpha = 0f }
+                    ) {
+                        Text("TRUE", fontSize = 28.sp, color = Color.Transparent)
+                    }
+                    Button(
+                        onClick = { },
+                        shape = RectangleShape,
+                        modifier = Modifier.graphicsLayer { alpha = 0f }
+                    ) {
+                        Text("FALSE", fontSize = 28.sp, color = Color.Transparent)
+                    }
                 }
             }
 
