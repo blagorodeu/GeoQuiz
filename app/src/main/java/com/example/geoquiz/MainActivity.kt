@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -83,8 +84,32 @@ fun QuizScreen() {
         }
     }
 
+    fun handleAnswer(userPressedTrue: Boolean) {
+        if (answeredCurrent)
+            return
+        answeredCurrent = true
+        val isCorrect = (userPressedTrue == currentQuestion.answerTrue)
+        if (isCorrect)
+        {
+            correctCount++
+            showMessage("Верно!")
+        }
+        else
+        {
+            showMessage("Неверно!")
+        }
+    }
+
+    // Обработка перехода к следующему вопросу
+    fun handleNext() {
+        currentIndex = (currentIndex + 1) % questionList.size
+        answeredCurrent = false
+    }
+
     // Построение UI
-    Scaffold() { innerPadding ->
+    Scaffold(
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
+    ) { innerPadding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -107,20 +132,20 @@ fun QuizScreen() {
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {
                 Button(
-                    onClick = { },
+                    onClick = { handleAnswer(true)},
                     shape = RectangleShape
                 ) {
                     Text("TRUE", fontSize = 28.sp)
                 }
                 Button(
-                    onClick = { },
+                    onClick = { handleAnswer(false)},
                     shape = RectangleShape
                 ) {
                     Text("FALSE", fontSize = 28.sp)
                 }
             }
 
-            Button(onClick = { },
+            Button(onClick = { handleNext()},
                 shape = RectangleShape,
                 modifier = Modifier.padding(top=10.dp)
                     .align(Alignment.End)) {
